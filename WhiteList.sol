@@ -36,5 +36,8 @@ contract WhiteList{
 }
 
 // OTHER FUNCTIONALITIES 
-// owner can remove address from white listed in such case
-// onwer can also white list address if need
+// owner can remove address from whitelisted in such case
+// onwer can also whitelist address if need
+// add timestamp to the addresses whitelist and provide some features to early birds
+// ... many more
+
