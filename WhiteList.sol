@@ -29,7 +29,7 @@ contract WhiteList{
           numOfWhiteListAddresses++; // increment
      }
 
-     function increseWhitelistaddres(uint8 _moreAddress) public onlyOnwer {
+     function increseWhitelistaddressSize(uint8 _moreAddress) public onlyOnwer {
           // only onwer (deployer of the smart contract) can call the funciton and increment
           maxWhitlistedAddresses += _moreAddress; // more address can be whitelisted 
      }
