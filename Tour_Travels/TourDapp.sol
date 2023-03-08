@@ -184,7 +184,27 @@ contract TripTour{
 
     }
 
-    function getMyTrips() external {
+    function getMyTrips() external view returns(Trip[] memory){
+        uint256 countTrips = tripCount;
+
+        uint256 myTripsCount = 0;
+        for(uint i = 0; i<countTrips;i++){
+            if(trip[i+1].owner == msg.sender){
+                myTripsCount++;
+            } 
+        }
+        Trip[] memory myTrips = new Trip[](myTripsCount);
+
+        uint index = 0;
+        for (uint256 i=0; i<countTrips;i++){
+            if(trip[i+1].owner == msg.sender){
+                uint256 _id = i + 1;
+                Trip storage currentTrip = trip[_id];
+                myTrips[index] = currentTrip;
+                index++;
+            }
+        }
+        return myTrips;
 
     }
 
