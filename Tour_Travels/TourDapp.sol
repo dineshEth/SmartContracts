@@ -13,12 +13,12 @@ contract TripTour{
     constructor (){
         owner = payable (msg.sender);
     }
-
+    
     event AgencyRigistered(address owner, uint256 id);
     event TripAnnounce(address _agency,string place,uint duration, uint totalBooking,uint _price);
     event BookTrip(address _owner, uint256 ticketCount, uint256 tripcode, bool confirmed);
     event CancelTrip (address _owner, bool canceled, string reason);
-    
+
                                                                            // agency struct
     struct Agency {
         string name;
@@ -76,6 +76,8 @@ contract TripTour{
                 name,msg.sender,description,_id, true
             );
 
+            emit AgencyRigistered(msg.sender, _id);
+
             id++;
             return _id;
     }
@@ -115,6 +117,8 @@ contract TripTour{
         tripsCount[msg.sender] += 1;
 
         payable(address(this)).transfer(createTripAmount);    // amount is strore in contract address
+
+        emit TripAnnounce(msg.sender, _place, dayTrip, _total, _price);
     
     return tripcode;   // retruns a unique trip code 
     }
@@ -132,11 +136,12 @@ contract TripTour{
         uint256 price = trip[_id].price * count;       // price * number of tickets  = total aount to be paid
         address tripOwner = trip[_id].owner;           // trip organizer's address 
 
-        User storage user = travellers[msg.sender];      
+        User storage user = travellers[msg.sender]; 
+        uint256 tripcode = 1000 + ticket;      
         
         user.user = msg.sender;
         user.ticketCount = count;
-        user.tripcode = 1000 + ticket;                 // tripcode (think of PNR Number)
+        user.tripcode = tripcode;                // tripcode (think of PNR Number)
         user.confirm = true;
         for(uint i=0 ;i<count; i++){
             user.tickets.push(ticket);                 // number of tickets you buy
@@ -146,6 +151,8 @@ contract TripTour{
         trip[_id].bookingCount += count;    
         
         payable(tripOwner).transfer(price);            // pay to owner of the trip oragnizer
+
+        emit BookTrip(msg.sender,count, tripcode, true);
 
         return user.ticketCount = count;
     }
@@ -157,7 +164,7 @@ contract TripTour{
      * cancel tickets and allot it to others
      * pay 90% back to user
      */
-    function cancelBooking(uint _id, uint count) public {
+    function cancelBooking(uint _id, uint count,string memory _reason) public {
         require(travellers[msg.sender].confirm,"Not confirmed traveller");
         require(trip[id].dates[1] < block.timestamp,"Trip expired");
 
@@ -168,6 +175,8 @@ contract TripTour{
         delete travellers[msg.sender];               // delete user
         trip[_id].bookingCount -= count;             // free from booking and allot for other
         payable (msg.sender).transfer(amount);       // pay back
+
+        emit CancelTrip(msg.sender, true, _reason);
     }
 
 
