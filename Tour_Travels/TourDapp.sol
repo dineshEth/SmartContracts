@@ -141,16 +141,16 @@ contract TripTour{
         
         user.user = msg.sender;
         user.ticketCount = count;
-        user.tripcode = tripcode;                                           // tripcode (think of PNR Number)
+        user.tripcode = tripcode;                                                       // tripcode (think of PNR Number)
         user.confirm = true;
         for(uint i=0 ;i<count; i++){
-            user.tickets.push(ticket);                                          // number of tickets you buy
+            user.tickets.push(ticket);                                                  // number of tickets you buy
             ticket++;
         }
 
         trip[_id].bookingCount += count;    
         
-        payable(tripOwner).transfer(price);                                     // pay to owner of the trip oragnizer
+        payable(tripOwner).transfer(price);                                             // pay to owner of the trip oragnizer
 
         emit BookTrip(msg.sender,count, tripcode, true);
 
@@ -168,13 +168,13 @@ contract TripTour{
         require(travellers[msg.sender].confirm,"Not confirmed traveller");
         require(trip[id].dates[1] < block.timestamp,"Trip expired");
 
-        uint256 price = trip[_id].price;             // price
-        uint256 penaltyCharge = (price * 1)/10;      // penalty 10%
-        uint amount = price - penaltyCharge;         // 90%
+        uint256 price = trip[_id].price;                                            // price
+        uint256 penaltyCharge = (price * 1)/10;                                     // penalty 10%
+        uint amount = price - penaltyCharge;                                        // 90%
 
-        delete travellers[msg.sender];               // delete user
-        trip[_id].bookingCount -= count;             // free from booking and allot for other
-        payable (msg.sender).transfer(amount);       // pay back
+        delete travellers[msg.sender];                                              // delete user
+        trip[_id].bookingCount -= count;                                            // free from booking and allot for other
+        payable (msg.sender).transfer(amount);                                      // pay back
 
         emit CancelTrip(msg.sender, true, _reason);
     }
@@ -184,16 +184,16 @@ contract TripTour{
      * 
     */
     function getAllTrips() external view returns(Trip[] memory){
-        uint256 countTrip = tripCount;                          // total trips
+        uint256 countTrip = tripCount;                                              // total trips
 
-        Trip[] memory trips = new Trip[](countTrip);            //array of trips
+        Trip[] memory trips = new Trip[](countTrip);                                //array of trips
 
         uint index = 0;
 
         for(uint256 i = 0; i < countTrip; i++){
             uint _id = i + 1;
-            Trip storage currentTrip = trip[_id];              // trip  value
-            trips[index] = currentTrip;                        // assigned value to array
+            Trip storage currentTrip = trip[_id];                               // trip  value
+            trips[index] = currentTrip;                                         // assigned value to array
             index++;
         }
 
@@ -206,7 +206,7 @@ contract TripTour{
         
         uint256 totalTrips = 0;
         for (uint256 i = 0; i < countTripsForId; i++){
-            if(trip[i+1].id == __id){                       // condition for trip to id
+            if(trip[i+1].id == __id){                                           // condition for trip to id
                 totalTrips++;
             }
         }
