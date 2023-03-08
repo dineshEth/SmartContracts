@@ -255,3 +255,10 @@ contract TripTour{
         return myTrips;
     }
 }
+
+
+// cancel trip function (if not successfull trip)
+// transfer tickets and earn commit function
+// book more tickets function;
+// user profile funciton
+// discount function 
