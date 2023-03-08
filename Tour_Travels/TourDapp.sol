@@ -13,13 +13,13 @@ contract TripTour{
     constructor (){
         owner = payable (msg.sender);
     }
-    
+
     event AgencyRigistered(address owner, uint256 id);
     event TripAnnounce(address _agency,string place,uint duration, uint totalBooking,uint _price);
     event BookTrip(address _owner, uint256 ticketCount, uint256 tripcode, bool confirmed);
     event CancelTrip (address _owner, bool canceled, string reason);
 
-                                                                           // agency struct
+                                                                            // agency struct
     struct Agency {
         string name;
         address addr;
@@ -29,10 +29,10 @@ contract TripTour{
     }
 
     mapping(address => Agency) public registeredAgency;                   
-    mapping(address => uint256) public tripsCount;                        // trip count for each agency
+    mapping(address => uint256) public tripsCount;                          // trip count for each agency
     mapping(uint256 => address) public agencyAddress;
 
-                                                                          // trips data structure
+                                                                            // trips data structure
     struct Trip{
         string agencyName;
         uint256 id;
@@ -48,9 +48,9 @@ contract TripTour{
         uint256 totalCount;
     }
 
-    mapping(uint256 => Trip) public trip;                        // all the trips 
+    mapping(uint256 => Trip) public trip;                                       // all the trips 
 
-                                                                 // user information
+                                                                                // user information
     struct User {
         address user;
         uint ticketCount;
@@ -58,7 +58,7 @@ contract TripTour{
         bool confirm;
         uint[] tickets;
     }
-                                                                 // travellers mapping
+                                                                                // travellers mapping
     mapping(address => User) public travellers;
 
     /** registration fucntion for agency
@@ -104,7 +104,7 @@ contract TripTour{
 
         /** Generates a cryptography hash for a trip and a uinque code for the trip */
         bytes32 tripcode = keccak256(abi.encode(_tripName)); 
-        uint tripDays = dayTrip * 1 days;  // trip durations
+        uint tripDays = dayTrip * 1 days;                                            // trip durations
        
 
         trip[tripId]  = Trip(
@@ -116,11 +116,11 @@ contract TripTour{
         tripCount += 1;
         tripsCount[msg.sender] += 1;
 
-        payable(address(this)).transfer(createTripAmount);    // amount is strore in contract address
+        payable(address(this)).transfer(createTripAmount);                          // amount is strore in contract address
 
         emit TripAnnounce(msg.sender, _place, dayTrip, _total, _price);
     
-    return tripcode;   // retruns a unique trip code 
+    return tripcode;                                                                // retruns a unique trip code 
     }
 
 
@@ -132,25 +132,25 @@ contract TripTour{
         require(msg.value * count == trip[_id].price * count, "Pay the actual ticket price");
         require(count < trip[id].totalCount && count > 0 ,"Not availble");
 
-        uint256 ticket = trip[_id].bookingCount;       // availabe bookings
-        uint256 price = trip[_id].price * count;       // price * number of tickets  = total aount to be paid
-        address tripOwner = trip[_id].owner;           // trip organizer's address 
+        uint256 ticket = trip[_id].bookingCount;                                        // availabe bookings
+        uint256 price = trip[_id].price * count;                                        // price * number of tickets  = total aount to be paid
+        address tripOwner = trip[_id].owner;                                            // trip organizer's address 
 
         User storage user = travellers[msg.sender]; 
         uint256 tripcode = 1000 + ticket;      
         
         user.user = msg.sender;
         user.ticketCount = count;
-        user.tripcode = tripcode;                // tripcode (think of PNR Number)
+        user.tripcode = tripcode;                                           // tripcode (think of PNR Number)
         user.confirm = true;
         for(uint i=0 ;i<count; i++){
-            user.tickets.push(ticket);                 // number of tickets you buy
+            user.tickets.push(ticket);                                          // number of tickets you buy
             ticket++;
         }
 
         trip[_id].bookingCount += count;    
         
-        payable(tripOwner).transfer(price);            // pay to owner of the trip oragnizer
+        payable(tripOwner).transfer(price);                                     // pay to owner of the trip oragnizer
 
         emit BookTrip(msg.sender,count, tripcode, true);
 
