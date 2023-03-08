@@ -88,6 +88,7 @@ contract TripTour{
         require(msg.value == createTripAmount , "Pay suffcient ether to create a trip");
         require(registeredAgency[msg.sender].registered , "Register your agency");
         
+        uint256 tripId = tripCount + 1;
         
         string memory _agency = registeredAgency[msg.sender].name;
 
@@ -96,12 +97,13 @@ contract TripTour{
         uint tripDays = dayTrip * 1 days;  // trip durations
        
 
-        trip[tripCount]  = Trip(
+        trip[tripId]  = Trip(
             _agency,msg.sender,_tripName,_price,_description,
             [block.timestamp, block.timestamp + tripDays],
             _image,_place,tripcode,0,_total
         );
 
+        tripCount += 1;
         tripsCount[msg.sender] += 1;
 
         payable(address(this)).transfer(createTripAmount);    // amount is strore in contract address
@@ -161,8 +163,21 @@ contract TripTour{
     }
 
 
-    function getAlltrips() external {
+    function getAllTrips() external view returns(Trip[] memory){
+        uint256 countTrip = tripCount;
 
+        Trip[] memory trips = new Trip[](countTrip);
+
+        uint index = 0;
+
+        for(uint256 i = 0; i < countTrip; i++){
+            uint _id = i + 1;
+            Trip storage currentItem = trip[_id];
+            trips[index] = currentItem;
+            index++;
+        }
+
+        return trips;
     }
 
     function allTripForId(uint256 id)external  {
