@@ -13,6 +13,12 @@ contract TripTour{
     constructor (){
         owner = payable (msg.sender);
     }
+
+    event AgencyRigistered(address owner, uint256 id);
+    event TripAnnounce(address _agency,string place,uint duration, uint totalBooking,uint _price);
+    event BookTrip(address _owner, uint256 ticketCount, uint256 tripcode, bool confirmed);
+    event CancelTrip (address _owner, bool canceled, string reason);
+    
                                                                            // agency struct
     struct Agency {
         string name;
