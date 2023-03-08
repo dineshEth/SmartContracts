@@ -29,6 +29,7 @@ contract TripTour{
                                                                           // trips data structure
     struct Trip{
         string agencyName;
+        uint256 id;
         address owner;
         string tripName;
         uint256 price;
@@ -91,6 +92,7 @@ contract TripTour{
         uint256 tripId = tripCount + 1;
         
         string memory _agency = registeredAgency[msg.sender].name;
+        uint256 _agencyId = registeredAgency[msg.sender].id;
 
         /** Generates a cryptography hash for a trip and a uinque code for the trip */
         bytes32 tripcode = keccak256(abi.encode(_tripName)); 
@@ -98,7 +100,7 @@ contract TripTour{
        
 
         trip[tripId]  = Trip(
-            _agency,msg.sender,_tripName,_price,_description,
+            _agency,_agencyId,msg.sender,_tripName,_price,_description,
             [block.timestamp, block.timestamp + tripDays],
             _image,_place,tripcode,0,_total
         );
@@ -163,27 +165,56 @@ contract TripTour{
     }
 
 
+    /** Returns all the trips created (return array)
+     * 
+    */
     function getAllTrips() external view returns(Trip[] memory){
-        uint256 countTrip = tripCount;
+        uint256 countTrip = tripCount;                          // total trips
 
-        Trip[] memory trips = new Trip[](countTrip);
+        Trip[] memory trips = new Trip[](countTrip);            //array of trips
 
         uint index = 0;
 
         for(uint256 i = 0; i < countTrip; i++){
             uint _id = i + 1;
-            Trip storage currentItem = trip[_id];
-            trips[index] = currentItem;
+            Trip storage currentTrip = trip[_id];              // trip  value
+            trips[index] = currentTrip;                        // assigned value to array
             index++;
         }
 
         return trips;
     }
 
-    function allTripForId(uint256 id)external  {
+    /** Only returns trips belongs to the id*/
+    function allTripForId(uint256 __id)external view  returns(Trip[] memory) {
+        uint256 countTripsForId = tripCount;
+        
+        uint256 totalTrips = 0;
+        for (uint256 i = 0; i < countTripsForId; i++){
+            if(trip[i+1].id == __id){                       // condition for trip to id
+                totalTrips++;
+            }
+        }
 
+        Trip[] memory tripsForId = new Trip[](totalTrips);
+
+        uint256 index = 0;
+
+        for(uint i=0; i<countTripsForId; i++){
+            if(trip[i].id == __id){
+                uint256 _id = i + 1;
+
+                Trip storage currentTrip = trip[_id];
+                tripsForId[index] = currentTrip;
+
+                index++;
+            }
+        }
+
+        return tripsForId;
     }
 
+    /** Returns all trips belongs to the address */
     function getMyTrips() external view returns(Trip[] memory){
         uint256 countTrips = tripCount;
 
@@ -193,6 +224,7 @@ contract TripTour{
                 myTripsCount++;
             } 
         }
+
         Trip[] memory myTrips = new Trip[](myTripsCount);
 
         uint index = 0;
@@ -204,7 +236,7 @@ contract TripTour{
                 index++;
             }
         }
-        return myTrips;
 
+        return myTrips;
     }
 }
