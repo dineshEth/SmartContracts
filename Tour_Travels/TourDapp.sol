@@ -207,8 +207,4 @@ contract TripTour{
         return myTrips;
 
     }
-
-    function cancelTrip() external {
-
-    }
 }
